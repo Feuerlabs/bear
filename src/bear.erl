@@ -99,7 +99,7 @@ get_statistics_subset(Values, Items) ->
     Length = length(Values),
     if Length < ?STATS_MIN ->
 	    [I || {K,_} = I <- get_statistics([]),
-		  lists:member(K, Items) orelse K==percentiles];
+		  lists:member(K, Items) orelse K==percentile];
        true ->
 	    SortedValues = lists:sort(Values),
 	    Steps = calc_steps(Items),
