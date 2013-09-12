@@ -125,7 +125,7 @@ level(variance          ) -> 3;
 level(skewness          ) -> 3;
 level(kurtosis          ) -> 3;
 level(histogram         ) -> 3;
-level(arithmetic_mean   ) -> 2;
+level(arithmetic_mean   ) -> 1;  % we'll calculate from list:sum()
 level(geometric_mean    ) -> 2;
 level(harmonic_mean     ) -> 2;
 level(_) -> 1.
@@ -134,7 +134,8 @@ report_subset(Items, N, SortedValues, Scan_res, Scan_res2) ->
     lists:map(
       fun(min) -> {min, hd(SortedValues)};
 	 (max) -> {max, lists:last(SortedValues)};
-	 (arithmetic_mean) -> {arithmetic_mean, arithmetic_mean(Scan_res)};
+	 (arithmetic_mean) -> {arithmetic_mean, arithmetic_mean(
+						  Scan_res,SortedValues,N)};
 	 (harmonic_mean) -> {harmonic_mean, harmonic_mean(Scan_res)};
 	 (geometric_mean) -> {geometric_mean, geometric_mean(Scan_res)};
 	 (median) -> {median, percentile(SortedValues,
@@ -199,6 +200,12 @@ scan_values2([], _, Acc) ->
 
 arithmetic_mean(#scan_result{n=N, sumX=Sum}) ->
     Sum/N.
+
+arithmetic_mean([], Values, N) ->
+    lists:sum(Values) / N;
+arithmetic_mean(#scan_result{n=N, sumX=Sum},_,_) ->
+    Sum/N.
+
 
 geometric_mean(#scan_result{n=N, sumLog=SumLog}) ->
     math:exp(SumLog/N).
